@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Yukino.dao.MaintenanceSheetMapper">
+  <resultMap id="BaseResultMap" type="com.Yukino.bean.MaintenanceSheet">
+    <id column="M_id" jdbcType="INTEGER" property="mId" />
+    <result column="c_id" jdbcType="INTEGER" property="cId" />
+    <result column="s_id" jdbcType="INTEGER" property="sId" />
+    <result column="r_id" jdbcType="INTEGER" property="rId" />
+    <result column="r_context" jdbcType="VARCHAR" property="rContext" />
+  </resultMap>
+  <resultMap id="ResultMapWithCustomer" type="com.Yukino.bean.MaintenanceSheet">
+    <id property="mId" column="m_id" javaType="INTEGER"/>
+    <result column="c_id" jdbcType="INTEGER" property="cId" />
+    <result column="s_id" jdbcType="INTEGER" property="sId" />
+    <result column="r_id" jdbcType="INTEGER" property="rId" />
+    <result column="r_context" jdbcType="VARCHAR" property="rContext" />
+    <association property="customer">
+      <id column="c_id" jdbcType="INTEGER" property="cId" />
+      <result column="c_name" jdbcType="VARCHAR" property="cName" />
+      <result column="cost" jdbcType="DECIMAL" property="cost" />
+      <result column="comment" jdbcType="VARCHAR" property="comment" />
+      <result column="c_passwrod" jdbcType="INTEGER" property="cPasswrod" />
+    </association>
+  </resultMap>
+  <resultMap id="ResultMapWithService" type="com.Yukino.bean.MaintenanceSheet">
+    <id column="M_id" jdbcType="INTEGER" property="mId" />
+    <result column="c_id" jdbcType="INTEGER" property="cId" />
+    <result column="s_id" jdbcType="INTEGER" property="sId" />
+    <result column="r_id" jdbcType="INTEGER" property="rId" />
+    <result column="r_context" jdbcType="VARCHAR" property="rContext" />
+    <association property="customerService">
+      <id column="s_id" jdbcType="INTEGER" property="sId" />
+      <result column="s_name" jdbcType="VARCHAR" property="sName" />
+      <result column="s_password" jdbcType="INTEGER" property="sPassword" />
+    </association>
+  </resultMap>
+
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    M_id, c_id, s_id, r_id, r_context
+  </sql>
+  <!--根据自定义的结果查询-->
+  <select id="selectBycId" resultMap="ResultMapWithCustomer">
+    select   M_id, m.c_id, s_id, r_id, r_context,c.c_id,c.c_name,c.c_passwrod ,c.comment,c.cost
+    from maintenancesheet m left join customer c on m.c_id = c.c_id where m.c_id=#{cId}
+  </select>
+
+  <!--根据自定义的结果集查询所有结果-->
+  <select id="selectAllWithService" resultMap="ResultMapWithService">
+    select M_id, c_id, m.s_id, r_id, r_context,s.s_id,s.s_name,s.s_password from maintenancesheet m left join service s on s.s_id = m.s_id
+  </select>
+  <update id="updateByKey" parameterType="map">
+    update maintenancesheet set r_context=#{record.rContext} where M_id=#{record.mId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByExample" parameterType="com.Yukino.bean.MaintenanceSheetExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from maintenancesheet
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from maintenancesheet
+    where M_id = #{mId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from maintenancesheet
+    where M_id = #{mId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.Yukino.bean.MaintenanceSheetExample">
+    delete from maintenancesheet
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.Yukino.bean.MaintenanceSheet">
+    insert into maintenancesheet (M_id, c_id, s_id, 
+      r_id, r_context)
+    values (#{mId,jdbcType=INTEGER}, #{cId,jdbcType=INTEGER}, #{sId,jdbcType=INTEGER}, 
+      #{rId,jdbcType=INTEGER}, #{rContext,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.Yukino.bean.MaintenanceSheet">
+    insert into maintenancesheet
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mId != null">
+        M_id,
+      </if>
+      <if test="cId != null">
+        c_id,
+      </if>
+      <if test="sId != null">
+        s_id,
+      </if>
+      <if test="rId != null">
+        r_id,
+      </if>
+      <if test="rContext != null">
+        r_context,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mId != null">
+        #{mId,jdbcType=INTEGER},
+      </if>
+      <if test="cId != null">
+        #{cId,jdbcType=INTEGER},
+      </if>
+      <if test="sId != null">
+        #{sId,jdbcType=INTEGER},
+      </if>
+      <if test="rId != null">
+        #{rId,jdbcType=INTEGER},
+      </if>
+      <if test="rContext != null">
+        #{rContext,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.Yukino.bean.MaintenanceSheetExample" resultType="java.lang.Long">
+    select count(*) from maintenancesheet
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update maintenancesheet
+    <set>
+      <if test="record.mId != null">
+        M_id = #{record.mId,jdbcType=INTEGER},
+      </if>
+      <if test="record.cId != null">
+        c_id = #{record.cId,jdbcType=INTEGER},
+      </if>
+      <if test="record.sId != null">
+        s_id = #{record.sId,jdbcType=INTEGER},
+      </if>
+      <if test="record.rId != null">
+        r_id = #{record.rId,jdbcType=INTEGER},
+      </if>
+      <if test="record.rContext != null">
+        r_context = #{record.rContext,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update maintenancesheet
+    set M_id = #{record.mId,jdbcType=INTEGER},
+      c_id = #{record.cId,jdbcType=INTEGER},
+      s_id = #{record.sId,jdbcType=INTEGER},
+      r_id = #{record.rId,jdbcType=INTEGER},
+      r_context = #{record.rContext,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.Yukino.bean.MaintenanceSheet">
+    update maintenancesheet
+    <set>
+      <if test="cId != null">
+        c_id = #{cId,jdbcType=INTEGER},
+      </if>
+      <if test="sId != null">
+        s_id = #{sId,jdbcType=INTEGER},
+      </if>
+      <if test="rId != null">
+        r_id = #{rId,jdbcType=INTEGER},
+      </if>
+      <if test="rContext != null">
+        r_context = #{rContext,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where M_id = #{mId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.Yukino.bean.MaintenanceSheet">
+    update maintenancesheet
+    set c_id = #{cId,jdbcType=INTEGER},
+      s_id = #{sId,jdbcType=INTEGER},
+      r_id = #{rId,jdbcType=INTEGER},
+      r_context = #{rContext,jdbcType=VARCHAR}
+    where M_id = #{mId,jdbcType=INTEGER}
+  </update>
+</mapper>

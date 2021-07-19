@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!--配置生成的文件中包含什么-->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+
+        <!--配置数据库连接信息-->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/afterservice?&amp;useSSL=false&amp;allowPublicKeyRetrieval=TRUE&amp;rewriteBatchedStatements=TRUE"
+                        userId="user"
+                        password="123456">
+        </jdbcConnection>
+
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        <!--javaBean生成的位置-->
+        <javaModelGenerator targetPackage="com.Yukino.bean" targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!--指定sql映射文件生成的位置-->
+        <sqlMapGenerator targetPackage="mapper"  targetProject=".\src\main\resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <!--指定dao接口生成的位置，mapper接口位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.Yukino.dao"  targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+        <!--table指定每个表生成的策略-->
+        <table tableName="customer" domainObjectName="Customer"/>
+        <table tableName="service" domainObjectName="CustomerService"/>
+        <table tableName="manager" domainObjectName="Manager"/>
+        <table tableName="repairpersonnel" domainObjectName="RepairPersonnel"/>
+        <table tableName="maintenancesheet" domainObjectName="MaintenanceSheet"/>
+    </context>
+</generatorConfiguration>
